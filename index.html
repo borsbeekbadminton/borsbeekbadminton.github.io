@@ -102,6 +102,71 @@
             color: white;
             font-size: 0.9rem;
         }
+
+        /* Modal styling */
+        dialog::backdrop {
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(2px);
+        }
+
+        /* Calendar styling */
+        .calendar-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .month {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            width: 170px;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .month-title {
+            text-align: center;
+            font-weight: bold;
+            color: #125D72;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .day-header {
+            font-weight: bold;
+            color: #888;
+            font-size: 0.7rem;
+        }
+
+        .day {
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .play-date {
+            background-color: #F9A825;
+            color: #333;
+            font-weight: bold;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+        }
+
+        .empty-day {
+            color: transparent;
+        }
     </style>
 </head>
 
@@ -126,6 +191,251 @@
             <h2>Wanneer & Waar</h2>
             <p>Tijdstip: We spelen op <strong>maandagavond</strong> van 21u15 tot 22u45.</p>
             <p>Locatie: <strong>Boeckenberg Sportcentrum</strong>, Grensstraat 9, 2100 Deurne (Antwerpen).</p>
+
+            <button onclick="document.getElementById('dates-modal').showModal()" class="cta-button"
+                style="border:none; cursor:pointer; font-size: 1rem; font-family: inherit; margin-bottom: 15px;">Bekijk
+                speel-data najaar 2026</button>
+            <dialog id="dates-modal"
+                style="border-radius: 8px; border: none; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); max-width: 650px; width: 95%;">
+                <h3 style="margin-top: 0; color: #125D72; border-bottom: 2px solid #125D72; padding-bottom: 0.5rem;">
+                    Speel-data najaar 2026</h3>
+                <div class="calendar-container">
+                    <div class="month">
+                        <div class="month-title">Augustus</div>
+                        <div class="days-grid">
+                            <div class="day-header">Ma</div>
+                            <div class="day-header">Di</div>
+                            <div class="day-header">Wo</div>
+                            <div class="day-header">Do</div>
+                            <div class="day-header">Vr</div>
+                            <div class="day-header">Za</div>
+                            <div class="day-header">Zo</div>
+                            <div class="day empty-day"></div>
+                            <div class="day empty-day"></div>
+                            <div class="day empty-day"></div>
+                            <div class="day empty-day"></div>
+                            <div class="day empty-day"></div>
+                            <div class="day">1</div>
+                            <div class="day">2</div>
+                            <div class="day">3</div>
+                            <div class="day">4</div>
+                            <div class="day">5</div>
+                            <div class="day">6</div>
+                            <div class="day">7</div>
+                            <div class="day">8</div>
+                            <div class="day">9</div>
+                            <div class="day">10</div>
+                            <div class="day">11</div>
+                            <div class="day">12</div>
+                            <div class="day">13</div>
+                            <div class="day">14</div>
+                            <div class="day">15</div>
+                            <div class="day">16</div>
+                            <div class="day">17</div>
+                            <div class="day">18</div>
+                            <div class="day">19</div>
+                            <div class="day">20</div>
+                            <div class="day">21</div>
+                            <div class="day">22</div>
+                            <div class="day">23</div>
+                            <div class="day">24</div>
+                            <div class="day">25</div>
+                            <div class="day">26</div>
+                            <div class="day">27</div>
+                            <div class="day">28</div>
+                            <div class="day">29</div>
+                            <div class="day">30</div>
+                            <div class="day play-date">31</div>
+                        </div>
+                    </div>
+                    <div class="month">
+                        <div class="month-title">September</div>
+                        <div class="days-grid">
+                            <div class="day-header">Ma</div>
+                            <div class="day-header">Di</div>
+                            <div class="day-header">Wo</div>
+                            <div class="day-header">Do</div>
+                            <div class="day-header">Vr</div>
+                            <div class="day-header">Za</div>
+                            <div class="day-header">Zo</div>
+                            <div class="day empty-day"></div>
+                            <div class="day">1</div>
+                            <div class="day">2</div>
+                            <div class="day">3</div>
+                            <div class="day">4</div>
+                            <div class="day">5</div>
+                            <div class="day">6</div>
+                            <div class="day">7</div>
+                            <div class="day">8</div>
+                            <div class="day">9</div>
+                            <div class="day">10</div>
+                            <div class="day">11</div>
+                            <div class="day">12</div>
+                            <div class="day">13</div>
+                            <div class="day play-date">14</div>
+                            <div class="day">15</div>
+                            <div class="day">16</div>
+                            <div class="day">17</div>
+                            <div class="day">18</div>
+                            <div class="day">19</div>
+                            <div class="day">20</div>
+                            <div class="day play-date">21</div>
+                            <div class="day">22</div>
+                            <div class="day">23</div>
+                            <div class="day">24</div>
+                            <div class="day">25</div>
+                            <div class="day">26</div>
+                            <div class="day">27</div>
+                            <div class="day play-date">28</div>
+                            <div class="day">29</div>
+                            <div class="day">30</div>
+                        </div>
+                    </div>
+                    <div class="month">
+                        <div class="month-title">Oktober</div>
+                        <div class="days-grid">
+                            <div class="day-header">Ma</div>
+                            <div class="day-header">Di</div>
+                            <div class="day-header">Wo</div>
+                            <div class="day-header">Do</div>
+                            <div class="day-header">Vr</div>
+                            <div class="day-header">Za</div>
+                            <div class="day-header">Zo</div>
+                            <div class="day empty-day"></div>
+                            <div class="day empty-day"></div>
+                            <div class="day empty-day"></div>
+                            <div class="day">1</div>
+                            <div class="day">2</div>
+                            <div class="day">3</div>
+                            <div class="day">4</div>
+                            <div class="day play-date">5</div>
+                            <div class="day">6</div>
+                            <div class="day">7</div>
+                            <div class="day">8</div>
+                            <div class="day">9</div>
+                            <div class="day">10</div>
+                            <div class="day">11</div>
+                            <div class="day play-date">12</div>
+                            <div class="day">13</div>
+                            <div class="day">14</div>
+                            <div class="day">15</div>
+                            <div class="day">16</div>
+                            <div class="day">17</div>
+                            <div class="day">18</div>
+                            <div class="day play-date">19</div>
+                            <div class="day">20</div>
+                            <div class="day">21</div>
+                            <div class="day">22</div>
+                            <div class="day">23</div>
+                            <div class="day">24</div>
+                            <div class="day">25</div>
+                            <div class="day play-date">26</div>
+                            <div class="day">27</div>
+                            <div class="day">28</div>
+                            <div class="day">29</div>
+                            <div class="day">30</div>
+                            <div class="day">31</div>
+                        </div>
+                    </div>
+                    <div class="month">
+                        <div class="month-title">November</div>
+                        <div class="days-grid">
+                            <div class="day-header">Ma</div>
+                            <div class="day-header">Di</div>
+                            <div class="day-header">Wo</div>
+                            <div class="day-header">Do</div>
+                            <div class="day-header">Vr</div>
+                            <div class="day-header">Za</div>
+                            <div class="day-header">Zo</div>
+                            <div class="day empty-day"></div>
+                            <div class="day empty-day"></div>
+                            <div class="day empty-day"></div>
+                            <div class="day empty-day"></div>
+                            <div class="day empty-day"></div>
+                            <div class="day empty-day"></div>
+                            <div class="day">1</div>
+                            <div class="day play-date">2</div>
+                            <div class="day">3</div>
+                            <div class="day">4</div>
+                            <div class="day">5</div>
+                            <div class="day">6</div>
+                            <div class="day">7</div>
+                            <div class="day">8</div>
+                            <div class="day play-date">9</div>
+                            <div class="day">10</div>
+                            <div class="day">11</div>
+                            <div class="day">12</div>
+                            <div class="day">13</div>
+                            <div class="day">14</div>
+                            <div class="day">15</div>
+                            <div class="day play-date">16</div>
+                            <div class="day">17</div>
+                            <div class="day">18</div>
+                            <div class="day">19</div>
+                            <div class="day">20</div>
+                            <div class="day">21</div>
+                            <div class="day">22</div>
+                            <div class="day play-date">23</div>
+                            <div class="day">24</div>
+                            <div class="day">25</div>
+                            <div class="day">26</div>
+                            <div class="day">27</div>
+                            <div class="day">28</div>
+                            <div class="day">29</div>
+                            <div class="day play-date">30</div>
+                        </div>
+                    </div>
+                    <div class="month">
+                        <div class="month-title">December</div>
+                        <div class="days-grid">
+                            <div class="day-header">Ma</div>
+                            <div class="day-header">Di</div>
+                            <div class="day-header">Wo</div>
+                            <div class="day-header">Do</div>
+                            <div class="day-header">Vr</div>
+                            <div class="day-header">Za</div>
+                            <div class="day-header">Zo</div>
+                            <div class="day empty-day"></div>
+                            <div class="day">1</div>
+                            <div class="day">2</div>
+                            <div class="day">3</div>
+                            <div class="day">4</div>
+                            <div class="day">5</div>
+                            <div class="day">6</div>
+                            <div class="day play-date">7</div>
+                            <div class="day">8</div>
+                            <div class="day">9</div>
+                            <div class="day">10</div>
+                            <div class="day">11</div>
+                            <div class="day">12</div>
+                            <div class="day">13</div>
+                            <div class="day play-date">14</div>
+                            <div class="day">15</div>
+                            <div class="day">16</div>
+                            <div class="day">17</div>
+                            <div class="day">18</div>
+                            <div class="day">19</div>
+                            <div class="day">20</div>
+                            <div class="day play-date">21</div>
+                            <div class="day">22</div>
+                            <div class="day">23</div>
+                            <div class="day">24</div>
+                            <div class="day">25</div>
+                            <div class="day">26</div>
+                            <div class="day">27</div>
+                            <div class="day play-date">28</div>
+                            <div class="day">29</div>
+                            <div class="day">30</div>
+                            <div class="day">31</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <button onclick="document.getElementById('dates-modal').close()" class="cta-button"
+                        style="border:none; cursor:pointer; font-size: 1rem; font-family: inherit; margin-top: 0;">Sluiten</button>
+                </div>
+            </dialog>
+
             <div
                 style="margin-top: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); line-height: 0;">
                 <iframe style="border:0; width: 100%;" height="300" loading="lazy" allowfullscreen
@@ -146,7 +456,8 @@
             <p>Voor het seizoen 2026-2027 betaal je éénmalig <strong>130 EUR</strong>, te storten op rekeningnr.
                 BE48733056560427 (DE BORSBEEKSE BADMINTONCLUB) met vermelding van je volledige naam en "lidgeld
                 2026-2027". Hierin zit ook een <strong>sportverzekering</strong>.</p>
-            <p>Je <a href="mailto:borsbeekbadminton@gmail.com">stuurt</a> ons ook nog je adres, e-mail en telefoonnummer
+            <p>Je stuurt ons op <a href="mailto:borsbeekbadminton@gmail.com">borsbeekbadminton@gmail.com</a> ook nog je
+                adres, e-mail en telefoonnummer
                 (gsm) zodat we jou kunnen mailen en toevoegen in de WhatsApp groep (als je dat wenst).</p>
             <p><strong>De eerste sessie is GRATIS!</strong></p>
         </div>
