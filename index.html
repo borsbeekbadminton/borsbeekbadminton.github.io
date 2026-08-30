@@ -181,6 +181,34 @@
                 top: 0.5rem;
                 right: 0.5rem;
             }
+
+            /* Responsive FullCalendar Toolbar for Mobile */
+            .fc .fc-toolbar {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 1em !important;
+            }
+
+            .fc .fc-toolbar-chunk:nth-child(2) {
+                /* Place Title on top */
+                order: -1;
+                width: 100%;
+                text-align: center;
+                margin-bottom: 2px;
+            }
+
+            .fc .fc-toolbar-title {
+                font-size: 1.15rem !important;
+                margin: 0;
+            }
+
+            .fc .fc-button {
+                padding: 0.3rem 0.5rem !important;
+                font-size: 0.8rem !important;
+            }
         }
 
         #calendar {
@@ -287,6 +315,12 @@
                         left: 'prev,next today',
                         center: 'title',
                         right: 'listMonth,dayGridMonth'
+                    },
+
+                    buttonText: {
+                        today: 'Vandaag',
+                        listMonth: 'Lijst',
+                        dayGridMonth: 'Maand'
                     },
 
                     eventTimeFormat: {
