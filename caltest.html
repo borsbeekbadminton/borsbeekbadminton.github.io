@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Google Calendar List View</title>
+
+    <!-- 1. Load FullCalendar Core (includes list views out of the box) -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+
+    <!-- 2. Load the Google Calendar Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.10/index.global.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 40px;
+        }
+
+        #calendar {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- The container where the calendar will render -->
+    <div id="calendar"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                // Sets the default view to a list format rather than a grid
+                initialView: 'listMonth',
+
+                // Optional: Adds header controls so users can change the view
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'listMonth,listWeek,dayGridMonth'
+                },
+
+                // 3. Inject your Google Calendar credentials here
+                googleCalendarApiKey: 'AIzaSyBQt-TS_n3_q3GogaIV2Bx9N6e5-V6uQ6A',
+                events: {
+                    googleCalendarId: 'borsbeekbadminton@gmail.com'
+                }
+            });
+
+            calendar.render();
+        });
+    </script>
+
+</body>
+
+</html>
