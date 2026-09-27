@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Borsbeekse Badmintonclub | Recreatief Badminton in Deurne</title>
+    <meta name="description" content="Borsbeek Badminton is een gezellige, recreatieve badmintonclub in het Boeckenberg Sportcentrum (Deurne). Speel elke maandagavond mee. De eerste sessie is gratis!">
+    <meta name="keywords" content="badminton, Borsbeek, Deurne, recreatief badminton, Boeckenberg Sportcentrum, badmintonclub Antwerpen">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Borsbeekse Badmintonclub">
+    <meta property="og:description" content="Gezellige, recreatieve badmintonclub voor elk niveau. Speel wekelijks mee op maandagavond in Boeckenberg Sportcentrum.">
+    <meta property="og:image" content="https://borsbeekbadminton.github.io/groepsfoto.webp">
+    <meta property="og:url" content="https://borsbeekbadminton.github.io">
+    
+    <!-- Preload SVG Logo to prevent layout shift -->
+    <link rel="preload" href="logo.svg" as="image">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Structured Data (JSON-LD) for Local SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SportsClub",
+      "name": "Borsbeekse Badmintonclub",
+      "url": "https://borsbeekbadminton.github.io",
+      "logo": "https://borsbeekbadminton.github.io/logo.svg",
+      "image": "https://borsbeekbadminton.github.io/groepsfoto.webp",
+      "description": "Gezellige, recreatieve badmintonclub in Deurne voor spelers van elk niveau.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Grensstraat 9",
+        "addressLocality": "Deurne",
+        "postalCode": "2100",
+        "addressRegion": "Antwerpen",
+        "addressCountry": "BE"
+      },
+      "priceRange": "€130/jaar",
+      "email": "borsbeekbadminton@gmail.com",
+      "event": {
+        "@type": "Event",
+        "name": "Wekelijkse Badminton Training",
+        "schedule": {
+          "@type": "Schedule",
+          "byDay": "https://schema.org/Monday",
+          "startTime": "21:15",
+          "endTime": "22:45"
+        }
+      }
+    }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>
+            <!-- SVG with aria-label for accessibility -->
+            <img alt="Logo Borsbeekse Badmintonclub" aria-label="Borsbeekse Badmintonclub Logo" src="logo.svg">
+        </h1>
+    </header>
+
+    <main>
+        <section>
+            <h2>Over ons</h2>
+            <p>Welkom bij <strong>Borsbeek Badminton</strong>! Wij zijn een gezellige, recreatieve badmintonclub die openstaat voor spelers van elk niveau. Of je nu al jaren geen racket hebt aangeraakt of elke week speelt, je vindt hier een fijne bende. Onze focus ligt op plezier hebben, lekker zweten en genieten van het spel.</p>
+            <!-- Native lazy loading added -->
+            <img alt="Groepsfoto Borsbeekse Badmintonclub met spelers" src="groepsfoto.webp" loading="lazy">
+        </section>
+
+        <section>
+            <h2>Wanneer &amp; Waar</h2>
+            <p>Tijdstip: We spelen op <strong>maandagavond</strong> van 21u15 tot 22u45.</p>
+            <p>Locatie: <strong>Boeckenberg Sportcentrum</strong>, Grensstraat 9, 2100 Deurne (Antwerpen).</p>
+
+            <div>
+                <h3>Komende Speel-data</h3>
+                <!-- Empty list populated dynamically by JS -->
+                <ul id="play-dates"></ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>Wat mee te nemen</h2>
+            <p>Indoor schoenen die geen strepen achterlaten, comfortabele kleding en een waterfles is altijd handig. We hebben een paar extra rackets voor wie er nog geen heeft, en shuttles kunnen als je beslist te blijven spelen ook ter plaatse aangekocht worden.</p>
+        </section>
+
+        <section>
+            <h2>Lidmaatschap</h2>
+            <p>Voor het seizoen 2026-2027 betaal je éénmalig <strong>130 EUR</strong>, te storten op rekeningnr. BE48733056560427 (DE BORSBEEKSE BADMINTONCLUB) met vermelding van je volledige naam en "lidgeld 2026-2027". Hierin zit ook een <strong>sportverzekering</strong>.</p>
+            <p>Je stuurt ons op <a href="mailto:borsbeekbadminton@gmail.com" aria-label="Stuur een e-mail naar Borsbeek Badminton">borsbeekbadminton@gmail.com</a> ook nog je adres, e-mail en telefoonnummer (gsm) zodat we jou kunnen mailen en toevoegen in de WhatsApp groep (als je dat wenst).</p>
+            <p><strong>De eerste sessie is GRATIS!</strong></p>
+        </section>
+
+        <section>
+            <h2>Wil je meedoen?</h2>
+            <p>Klaar om het veld op te gaan, of heb je nog vragen?</p>
+            <p>Stuur ons een <a href="mailto:borsbeekbadminton@gmail.com" aria-label="Neem contact op via e-mail">e-mail</a> of <strong>kom gewoon eens langs</strong> tijdens een van onze sessies!</p>
+            <p>En speel gerust dan mee!</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 Borsbeekse Badmintonclub. Alle rechten voorbehouden.</p>
+    </footer>
+
+    <!-- Script to dynamically generate the next 4 Mondays -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            function getNextMondays(count) {
+                const dates = [];
+                let d = new Date();
+                
+                // Find next Monday
+                d.setDate(d.getDate() + ((1 + 7 - d.getDay()) % 7 || 7));
+                
+                for(let i = 0; i < count; i++) {
+                    dates.push(new Date(d.getTime()));
+                    d.setDate(d.getDate() + 7); // Add 7 days for subsequent Mondays
+                }
+                return dates;
+            }
+
+            const datesList = document.getElementById('play-dates');
+            if (datesList) {
+                const mondays = getNextMondays(4);
+                mondays.forEach(date => {
+                    const li = document.createElement('li');
+                    // Format output: bijv. "Maandag 5 oktober (21u15 - 22u45)"
+                    const dateString = date.toLocaleDateString('nl-BE', { 
+                        weekday: 'long', 
+                        day: 'numeric', 
+                        month: 'long' 
+                    });
+                    li.textContent = `${dateString.charAt(0).toUpperCase() + dateString.slice(1)} (21u15 - 22u45)`;
+                    datesList.appendChild(li);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
