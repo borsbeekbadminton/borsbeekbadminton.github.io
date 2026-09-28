@@ -301,6 +301,104 @@
         .fc-list-day.fc-day-past {
             opacity: 0.6;
         }
+
+        /* Highlight next play date in green (and while ongoing) */
+        .fc-event.fc-next-event,
+        .fc-list-event.fc-next-event {
+            opacity: 1 !important;
+            filter: none !important;
+        }
+
+        .fc-list-event.fc-next-event {
+            border-left: 4px solid #2e7d32 !important;
+        }
+
+        .fc-list-event.fc-next-event td {
+            background-color: #eef7ee !important;
+        }
+
+        .fc-list-event.fc-next-event:hover td {
+            background-color: #e0f2e1 !important;
+        }
+
+        .fc-list-event.fc-next-event .fc-list-event-title,
+        .fc-list-event.fc-next-event .fc-list-event-title a {
+            color: #1b5e20 !important;
+            font-weight: 700 !important;
+        }
+
+        .fc-list-event.fc-next-event .fc-list-event-time {
+            color: #2e7d32 !important;
+            font-weight: 700 !important;
+        }
+
+        .fc-list-event.fc-next-event .fc-list-event-dot {
+            border-color: #2e7d32 !important;
+            background-color: #2e7d32 !important;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.25) !important;
+        }
+
+        /* Next play date badge */
+        .fc-next-event-badge {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 2px 8px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1.2;
+            color: #ffffff !important;
+            background-color: #2e7d32;
+            border-radius: 12px;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .fc-event-ongoing .fc-next-event-badge {
+            background-color: #1b5e20;
+            animation: ongoing-pulse 1.8s infinite;
+        }
+
+        @keyframes ongoing-pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.6);
+            }
+            70% {
+                box-shadow: 0 0 0 6px rgba(46, 125, 50, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(46, 125, 50, 0);
+            }
+        }
+
+        /* Next play date highlight in month grid view */
+        .fc-daygrid-event.fc-next-event {
+            background-color: #eef7ee !important;
+            border: 1.5px solid #2e7d32 !important;
+            border-radius: 4px;
+            box-shadow: 0 1px 4px rgba(46, 125, 50, 0.3) !important;
+        }
+
+        .fc-daygrid-event.fc-next-event .fc-event-title,
+        .fc-daygrid-event.fc-next-event .fc-event-time {
+            color: #1b5e20 !important;
+            font-weight: 700 !important;
+        }
+
+        .fc-daygrid-event.fc-next-event .fc-daygrid-event-dot {
+            border-color: #2e7d32 !important;
+            background-color: #2e7d32 !important;
+        }
+
+        .fc-daygrid-block-event.fc-next-event {
+            background-color: #2e7d32 !important;
+            border-color: #1b5e20 !important;
+            color: #ffffff !important;
+        }
+
+        .fc-daygrid-block-event.fc-next-event .fc-event-title,
+        .fc-daygrid-block-event.fc-next-event .fc-event-time {
+            color: #ffffff !important;
+        }
     </style>
     <!-- FullCalendar Core & Locales -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
@@ -387,6 +485,69 @@
 
     <script>
         let calendar;
+        let nextHighlightTimer;
+
+        function updateNextEventHighlight() {
+            if (!calendar) return;
+            const now = new Date();
+            const events = calendar.getEvents();
+            if (!events || events.length === 0) return;
+
+            // Find all events that have not ended yet (including currently ongoing events)
+            const activeEvents = events.filter(function (e) {
+                if (!e.start) return false;
+                const end = e.end || new Date(e.start.getTime() + 90 * 60 * 1000);
+                return end >= now;
+            });
+
+            // Remove existing next-event classes and badges
+            document.querySelectorAll('.fc-next-event').forEach(function (el) {
+                el.classList.remove('fc-next-event', 'fc-event-ongoing');
+                delete el.dataset.nextStatus;
+                const badge = el.querySelector('.fc-next-event-badge');
+                if (badge) badge.remove();
+            });
+
+            if (activeEvents.length === 0) return;
+
+            // Sort ascending by start time to find the earliest (ongoing or next upcoming) play date
+            activeEvents.sort(function (a, b) {
+                return a.start - b.start;
+            });
+
+            const nextEvent = activeEvents[0];
+            const nextStart = nextEvent.start.getTime();
+            const nextEnd = (nextEvent.end || new Date(nextStart + 90 * 60 * 1000)).getTime();
+            const isOngoing = nextStart <= now.getTime() && now.getTime() <= nextEnd;
+
+            // Tag DOM elements that correspond to this next event
+            document.querySelectorAll('.fc-event, .fc-list-event').forEach(function (el) {
+                const elStart = el.dataset.eventStart ? new Date(el.dataset.eventStart).getTime() : null;
+                const matchesId = el.dataset.eventId && el.dataset.eventId === nextEvent.id;
+                const matchesStart = elStart && Math.abs(elStart - nextStart) < 1000;
+
+                if (matchesId || matchesStart) {
+                    el.classList.add('fc-next-event');
+                    if (isOngoing) {
+                        el.classList.add('fc-event-ongoing');
+                    }
+                    el.dataset.nextStatus = isOngoing ? 'ongoing' : 'next';
+
+                    const titleEl = el.querySelector('.fc-list-event-title');
+                    if (titleEl && !titleEl.querySelector('.fc-next-event-badge')) {
+                        const badge = document.createElement('span');
+                        badge.className = 'fc-next-event-badge';
+                        badge.textContent = isOngoing ? 'Nu bezig' : 'Volgende speeldag';
+                        titleEl.appendChild(badge);
+                    }
+                }
+            });
+        }
+
+        function scheduleNextHighlight() {
+            clearTimeout(nextHighlightTimer);
+            nextHighlightTimer = setTimeout(updateNextEventHighlight, 30);
+        }
 
         function initCalendar() {
             if (!calendar) {
@@ -416,21 +577,39 @@
                     },
                     firstDay: 1,
 
-                    eventClassNames: function(arg) {
+                    eventsSet: function () {
+                        scheduleNextHighlight();
+                    },
+
+                    datesSet: function () {
+                        scheduleNextHighlight();
+                    },
+
+                    eventClassNames: function (arg) {
                         const now = new Date();
-                        const eventEnd = arg.event.end || arg.event.start;
+                        const eventEnd = arg.event.end || (arg.event.start ? new Date(arg.event.start.getTime() + 90 * 60 * 1000) : null);
                         if (arg.isPast || (eventEnd && eventEnd < now)) {
                             return ['fc-event-past'];
                         }
                         return [];
                     },
 
-                    eventDidMount: function(arg) {
+                    eventDidMount: function (arg) {
                         const now = new Date();
-                        const eventEnd = arg.event.end || arg.event.start;
+                        const eventEnd = arg.event.end || (arg.event.start ? new Date(arg.event.start.getTime() + 90 * 60 * 1000) : null);
                         if (arg.isPast || (eventEnd && eventEnd < now)) {
                             arg.el.classList.add('fc-event-past');
                         }
+                        if (arg.event.id) {
+                            arg.el.dataset.eventId = arg.event.id;
+                        }
+                        if (arg.event.start) {
+                            arg.el.dataset.eventStart = arg.event.start.toISOString();
+                        }
+                        if (arg.event.end) {
+                            arg.el.dataset.eventEnd = arg.event.end.toISOString();
+                        }
+                        scheduleNextHighlight();
                     },
 
                     googleCalendarApiKey: 'AIzaSyBQt-TS_n3_q3GogaIV2Bx9N6e5-V6uQ6A',
@@ -442,6 +621,7 @@
                 calendar.render();
             } else {
                 calendar.updateSize();
+                scheduleNextHighlight();
             }
         }
 
@@ -451,7 +631,10 @@
             document.body.style.overflow = 'hidden';
             initCalendar();
             setTimeout(() => {
-                if (calendar) calendar.updateSize();
+                if (calendar) {
+                    calendar.updateSize();
+                    scheduleNextHighlight();
+                }
             }, 50);
         }
 
@@ -472,6 +655,9 @@
                 closeCalendarModal();
             }
         });
+
+        // Automatically refresh highlight every 30 seconds so ongoing sessions update in real time
+        setInterval(updateNextEventHighlight, 30000);
     </script>
 
 </body>
