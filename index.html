@@ -500,7 +500,7 @@
                 return end >= now;
             });
 
-            // Remove existing next-event classes and badges
+            // Remove existing next-event classes and badges from all elements
             document.querySelectorAll('.fc-next-event').forEach(function (el) {
                 el.classList.remove('fc-next-event', 'fc-event-ongoing');
                 delete el.dataset.nextStatus;
@@ -520,13 +520,13 @@
             const nextEnd = (nextEvent.end || new Date(nextStart + 90 * 60 * 1000)).getTime();
             const isOngoing = nextStart <= now.getTime() && now.getTime() <= nextEnd;
 
-            // Tag DOM elements that correspond to this next event
-            document.querySelectorAll('.fc-event, .fc-list-event').forEach(function (el) {
-                const elStart = el.dataset.eventStart ? new Date(el.dataset.eventStart).getTime() : null;
-                const matchesId = el.dataset.eventId && el.dataset.eventId === nextEvent.id;
-                const matchesStart = elStart && Math.abs(elStart - nextStart) < 1000;
-
-                if (matchesId || matchesStart) {
+            // Highlight strictly ONLY one single event at a time (matched by start timestamp)
+            let matchedList = false;
+            document.querySelectorAll('.fc-list-event').forEach(function (el) {
+                if (matchedList) return;
+                const elStart = Number(el.dataset.eventStart);
+                if (elStart && Math.abs(elStart - nextStart) < 1000) {
+                    matchedList = true;
                     el.classList.add('fc-next-event');
                     if (isOngoing) {
                         el.classList.add('fc-event-ongoing');
@@ -540,6 +540,20 @@
                         badge.textContent = isOngoing ? 'Nu bezig' : 'Volgende speeldag';
                         titleEl.appendChild(badge);
                     }
+                }
+            });
+
+            let matchedGrid = false;
+            document.querySelectorAll('.fc-daygrid-event').forEach(function (el) {
+                if (matchedGrid) return;
+                const elStart = Number(el.dataset.eventStart);
+                if (elStart && Math.abs(elStart - nextStart) < 1000) {
+                    matchedGrid = true;
+                    el.classList.add('fc-next-event');
+                    if (isOngoing) {
+                        el.classList.add('fc-event-ongoing');
+                    }
+                    el.dataset.nextStatus = isOngoing ? 'ongoing' : 'next';
                 }
             });
         }
@@ -600,14 +614,11 @@
                         if (arg.isPast || (eventEnd && eventEnd < now)) {
                             arg.el.classList.add('fc-event-past');
                         }
-                        if (arg.event.id) {
-                            arg.el.dataset.eventId = arg.event.id;
-                        }
                         if (arg.event.start) {
-                            arg.el.dataset.eventStart = arg.event.start.toISOString();
+                            arg.el.dataset.eventStart = String(arg.event.start.getTime());
                         }
                         if (arg.event.end) {
-                            arg.el.dataset.eventEnd = arg.event.end.toISOString();
+                            arg.el.dataset.eventEnd = String(arg.event.end.getTime());
                         }
                         scheduleNextHighlight();
                     },
