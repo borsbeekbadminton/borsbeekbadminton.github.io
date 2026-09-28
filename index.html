@@ -486,19 +486,75 @@
     <script>
         let calendar;
         let nextHighlightTimer;
+        let trueNextEventStart = null;
+        let trueNextEventEnd = null;
+
+        async function fetchTrueNextEvent() {
+            try {
+                const now = new Date();
+                // Look back 2 hours so any currently ongoing event is included
+                const timeMin = new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString();
+                const url = 'https://www.googleapis.com/calendar/v3/calendars/borsbeekbadminton%40gmail.com/events?' +
+                    'key=AIzaSyBQt-TS_n3_q3GogaIV2Bx9N6e5-V6uQ6A' +
+                    '&singleEvents=true' +
+                    '&orderBy=startTime' +
+                    '&timeMin=' + encodeURIComponent(timeMin) +
+                    '&maxResults=5';
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data && data.items) {
+                    for (const item of data.items) {
+                        const startStr = item.start.dateTime || item.start.date;
+                        const endStr = item.end.dateTime || item.end.date;
+                        if (!startStr) continue;
+                        const start = new Date(startStr);
+                        const end = endStr ? new Date(endStr) : new Date(start.getTime() + 90 * 60 * 1000);
+                        if (end.getTime() >= now.getTime()) {
+                            trueNextEventStart = start.getTime();
+                            trueNextEventEnd = end.getTime();
+                            scheduleNextHighlight();
+                            break;
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn('Could not fetch true next event:', err);
+            }
+        }
 
         function updateNextEventHighlight() {
             if (!calendar) return;
             const now = new Date();
-            const events = calendar.getEvents();
-            if (!events || events.length === 0) return;
 
-            // Find all events that have not ended yet (including currently ongoing events)
-            const activeEvents = events.filter(function (e) {
-                if (!e.start) return false;
-                const end = e.end || new Date(e.start.getTime() + 90 * 60 * 1000);
-                return end >= now;
-            });
+            // If the previously saved next event has ended, refresh to find the next upcoming event
+            if (trueNextEventEnd && now.getTime() > trueNextEventEnd) {
+                trueNextEventStart = null;
+                trueNextEventEnd = null;
+                fetchTrueNextEvent();
+            }
+
+            // Fallback while fetch is pending: lock onto the earliest event from current calendar store
+            if (!trueNextEventStart) {
+                const events = calendar.getEvents();
+                if (events && events.length > 0) {
+                    const activeEvents = events.filter(function (e) {
+                        if (!e.start) return false;
+                        const end = e.end || new Date(e.start.getTime() + 90 * 60 * 1000);
+                        return end.getTime() >= now.getTime();
+                    });
+                    if (activeEvents.length > 0) {
+                        activeEvents.sort(function (a, b) {
+                            return a.start - b.start;
+                        });
+                        const earliest = activeEvents[0];
+                        // Only lock in if it is near the current date (within 14 days)
+                        if (earliest.start.getTime() - now.getTime() < 14 * 24 * 60 * 60 * 1000) {
+                            trueNextEventStart = earliest.start.getTime();
+                            trueNextEventEnd = (earliest.end || new Date(earliest.start.getTime() + 90 * 60 * 1000)).getTime();
+                        }
+                    }
+                }
+            }
 
             // Remove existing next-event classes and badges from all elements
             document.querySelectorAll('.fc-next-event').forEach(function (el) {
@@ -508,24 +564,16 @@
                 if (badge) badge.remove();
             });
 
-            if (activeEvents.length === 0) return;
+            if (!trueNextEventStart) return;
 
-            // Sort ascending by start time to find the earliest (ongoing or next upcoming) play date
-            activeEvents.sort(function (a, b) {
-                return a.start - b.start;
-            });
+            const isOngoing = trueNextEventStart <= now.getTime() && now.getTime() <= trueNextEventEnd;
 
-            const nextEvent = activeEvents[0];
-            const nextStart = nextEvent.start.getTime();
-            const nextEnd = (nextEvent.end || new Date(nextStart + 90 * 60 * 1000)).getTime();
-            const isOngoing = nextStart <= now.getTime() && now.getTime() <= nextEnd;
-
-            // Highlight strictly ONLY one single event at a time (matched by start timestamp)
+            // Highlight strictly ONLY the single event in the visible view matching trueNextEventStart
             let matchedList = false;
             document.querySelectorAll('.fc-list-event').forEach(function (el) {
                 if (matchedList) return;
                 const elStart = Number(el.dataset.eventStart);
-                if (elStart && Math.abs(elStart - nextStart) < 1000) {
+                if (elStart && Math.abs(elStart - trueNextEventStart) < 1000) {
                     matchedList = true;
                     el.classList.add('fc-next-event');
                     if (isOngoing) {
@@ -547,7 +595,7 @@
             document.querySelectorAll('.fc-daygrid-event').forEach(function (el) {
                 if (matchedGrid) return;
                 const elStart = Number(el.dataset.eventStart);
-                if (elStart && Math.abs(elStart - nextStart) < 1000) {
+                if (elStart && Math.abs(elStart - trueNextEventStart) < 1000) {
                     matchedGrid = true;
                     el.classList.add('fc-next-event');
                     if (isOngoing) {
@@ -640,6 +688,7 @@
             const modal = document.getElementById('dates-modal');
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+            fetchTrueNextEvent();
             initCalendar();
             setTimeout(() => {
                 if (calendar) {
@@ -667,8 +716,18 @@
             }
         });
 
-        // Automatically refresh highlight every 30 seconds so ongoing sessions update in real time
-        setInterval(updateNextEventHighlight, 30000);
+        // Fetch true next event on load
+        fetchTrueNextEvent();
+
+        // Periodically refresh highlight so ongoing sessions transition seamlessly
+        setInterval(function () {
+            const now = new Date();
+            if (trueNextEventEnd && now.getTime() > trueNextEventEnd) {
+                fetchTrueNextEvent();
+            } else {
+                updateNextEventHighlight();
+            }
+        }, 30000);
     </script>
 
 </body>
