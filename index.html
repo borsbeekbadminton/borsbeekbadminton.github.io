@@ -271,6 +271,36 @@
             max-width: 100%;
             margin: 0 auto;
         }
+
+        /* Gray out past events in the calendar (list and grid views) */
+        .fc-event-past {
+            opacity: 0.45 !important;
+            filter: grayscale(100%);
+        }
+
+        .fc-event-past .fc-list-event-title,
+        .fc-event-past .fc-list-event-title a,
+        .fc-event-past .fc-list-event-time,
+        .fc-event-past .fc-event-title,
+        .fc-event-past .fc-event-time {
+            color: #888888 !important;
+        }
+
+        .fc-event-past .fc-list-event-dot,
+        .fc-event-past .fc-daygrid-event-dot {
+            border-color: #999999 !important;
+        }
+
+        .fc-daygrid-event.fc-event-past {
+            background-color: #eeeeee !important;
+            border-color: #cccccc !important;
+            color: #888888 !important;
+        }
+
+        /* Soften past day headers in list view */
+        .fc-list-day.fc-day-past {
+            opacity: 0.6;
+        }
     </style>
     <!-- FullCalendar Core & Locales -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
@@ -385,6 +415,23 @@
                         hour12: false
                     },
                     firstDay: 1,
+
+                    eventClassNames: function(arg) {
+                        const now = new Date();
+                        const eventEnd = arg.event.end || arg.event.start;
+                        if (arg.isPast || (eventEnd && eventEnd < now)) {
+                            return ['fc-event-past'];
+                        }
+                        return [];
+                    },
+
+                    eventDidMount: function(arg) {
+                        const now = new Date();
+                        const eventEnd = arg.event.end || arg.event.start;
+                        if (arg.isPast || (eventEnd && eventEnd < now)) {
+                            arg.el.classList.add('fc-event-past');
+                        }
+                    },
 
                     googleCalendarApiKey: 'AIzaSyBQt-TS_n3_q3GogaIV2Bx9N6e5-V6uQ6A',
                     events: {
